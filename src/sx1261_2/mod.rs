@@ -155,7 +155,7 @@ where
             OpCode::WriteRegister.value(),
             Register::RegulatorDrive.addr1(),
             Register::RegulatorDrive.addr2(),
-            RegulatorDriveTrim::_1_36_and_DriveDisable.value(),
+            RegulatorDriveTrim::_1_36_and_DriveEnabled.value(),
         ];
         self.intf.write(&[&op_code_command_and_value], false).await
     }

@@ -394,7 +394,7 @@ where
         }
         let tx_pkt_params = self
             .radio_kind
-            .create_packet_params(0, false, 16, false, false, mdltn_params)?;
+            .create_packet_params(8, false, 16, true, false, mdltn_params)?;
         self.radio_kind.set_packet_params(&tx_pkt_params).await?;
         self.radio_kind.set_modulation_params(mdltn_params).await?;
         self.radio_kind

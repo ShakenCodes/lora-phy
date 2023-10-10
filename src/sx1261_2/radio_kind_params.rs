@@ -58,6 +58,10 @@ pub enum Register {
     TxClampCfg = 0x08D8,   // better resistance to antenna mismatch (see DS_SX1261-2_V1.2 datasheet chapter 15.2)
     RTCCtrl = 0x0902,      // RTC control
     EvtClr = 0x0944,       // event clear
+    RadioPowerControl = 0x091A, // power supply current limiter
+    RegulatorDrive = 0x091F, // regulator drive trimming and enable
+    SmpsControl0 = 0x0916, // SMPS clock detection
+    SmpsControl2 = 0x0923, // SMPS maximum drive
 }
 
 impl Register {
@@ -289,6 +293,50 @@ pub enum CADSymbols {
 }
 
 impl CADSymbols {
+    pub fn value(self) -> u8 {
+        self as u8
+    }
+}
+
+#[derive(Clone, Copy)]
+#[repr(u8)]
+#[allow(dead_code, non_camel_case_types)]
+pub enum SmpsMaximumDrive {
+    _20_mA = 0b_0000_u8,
+    _40_mA = 0b_0010_u8,
+    _60_mA = 0b_0100_u8,
+    _100_mA = 0b_0110_u8,
+}
+
+impl SmpsMaximumDrive {
+    pub fn value(self) -> u8 {
+        self as u8
+    }
+}
+
+#[derive(Clone, Copy)]
+#[repr(u8)]
+#[allow(dead_code, non_camel_case_types)]
+pub enum RegulatorDriveTrim {
+    _1_22_and_DriveDisable = 0b_0000_u8,
+    _1_22_and_DriveEnabled = 0b_0001_u8,
+    _1_24_and_DriveDisable = 0b_0010_u8,
+    _1_24_and_DriveEnabled = 0b_0011_u8,
+    _1_26_and_DriveDisable = 0b_0100_u8,
+    _1_26_and_DriveEnabled = 0b_0101_u8,
+    _1_28_and_DriveDisable = 0b_0110_u8,
+    _1_28_and_DriveEnabled = 0b_0111_u8,
+    _1_30_and_DriveDisable = 0b_1000_u8,
+    _1_30_and_DriveEnabled = 0b_1001_u8,
+    _1_32_and_DriveDisable = 0b_1010_u8,
+    _1_32_and_DriveEnabled = 0b_1011_u8,
+    _1_34_and_DriveDisable = 0b_1100_u8,
+    _1_34_and_DriveEnabled = 0b_1101_u8,
+    _1_36_and_DriveDisable = 0b_1110_u8, // Not specified, but used in SemTech AT code
+    _1_36_and_DriveEnabled = 0b_1111_u8, // Not specified, but used in SemTech AT code
+}
+
+impl RegulatorDriveTrim {
     pub fn value(self) -> u8 {
         self as u8
     }

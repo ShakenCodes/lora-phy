@@ -149,6 +149,26 @@ where
         (steps_int << SX126X_PLL_STEP_SHIFT_AMOUNT)
             + (((steps_frac << SX126X_PLL_STEP_SHIFT_AMOUNT) + (SX126X_PLL_STEP_SCALED >> 1)) / SX126X_PLL_STEP_SCALED)
     }
+
+    async fn limit_power_ldo_to_3_3_volts(&mut self) -> Result<(), RadioError> {
+        let op_code_command_and_value = [
+            OpCode::WriteRegister.value(),
+            Register::RegulatorDrive.addr1(),
+            Register::RegulatorDrive.addr2(),
+            RegulatorDriveTrim::_1_36_and_DriveDisable.value(),
+        ];
+        self.intf.write(&[&op_code_command_and_value], false).await
+    }
+
+    async fn configure_smps_maximum_drive(&mut self, max_drive: SmpsMaximumDrive) -> Result<(), RadioError> {
+        let op_code_command_and_value = [
+            OpCode::WriteRegister.value(),
+            Register::SmpsControl2.addr1(),
+            Register::SmpsControl2.addr2(),
+            max_drive.value(),
+        ];
+        self.intf.write(&[&op_code_command_and_value], false).await
+    }
 }
 
 impl<SPI, IV> RadioKind for SX1261_2<SPI, IV>
@@ -949,6 +969,8 @@ where
     }
 
     async fn set_tx_continuous_wave_mode(&mut self) -> Result<(), RadioError> {
+        self.limit_power_ldo_to_3_3_volts().await?;
+        self.configure_smps_maximum_drive(SmpsMaximumDrive::_60_mA).await?;
         self.intf.iv.enable_rf_switch_tx().await?;
 
         let op_code = [OpCode::SetTxContinuousWave.value()];
